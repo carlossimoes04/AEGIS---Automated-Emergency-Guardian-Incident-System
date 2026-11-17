@@ -16,8 +16,8 @@ object ImageUtils {
     fun bitmapToBase64DataUrl(
         bitmap: Bitmap,
         rotationDegrees: Int = 0,
-        maxDimension: Int = 1024,
-        jpegQuality: Int = 85
+        maxDimension: Int = 512,
+        jpegQuality: Int = 75
     ): String {
         val resized = resizeIfNeeded(bitmap, maxDimension)
         val upright = rotateIfNeeded(resized, rotationDegrees)
