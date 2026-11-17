@@ -6,14 +6,17 @@ import com.google.gson.annotations.SerializedName
  * Request payload sent to the NVIDIA NIM `/v1/chat/completions` endpoint.
  */
 data class NvidiaChatRequest(
-    val model: String = "meta/muse-glimmer-30b", // nvidia's model
+    val model: String = "nvidia/nemotron-3.5-super-vl-120b-a12b", // nvidia's model
     val messages: List<NvidiaMessage>, // list of messages
     @SerializedName("max_tokens") // max tokens to generate
-    val maxTokens: Int = 256, // 256 is the default value
+    val maxTokens: Int = 512,
     /**
-     * Lower values (e.g., 0.1–0.2) produce more deterministic, less creative responses.
+     * Lower values produce more deterministic, less creative responses.
+     * Higher values produce more creative responses.
      */
-    val temperature: Double = 0.2
+    val temperature: Double = 0.7,
+    @SerializedName("chat_template_kwargs")
+    val chatTemplateKwargs: Map<String, Boolean>? = mapOf("enable_thinking" to false)
 )
 
 /**
