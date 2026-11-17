@@ -1,4 +1,4 @@
-package cmov.grupo16.aegis.feature_scanner.data.remote.dto
+package cmov.grupo16.aegis.core.network.dto
 
 import com.google.gson.annotations.SerializedName
 
