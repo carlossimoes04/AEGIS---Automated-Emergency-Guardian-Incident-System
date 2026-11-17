@@ -1,7 +1,20 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
 }
+
+// this is used to read the local.properties file
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
+}
+
+// this is used to get the NVIDIA_API_KEY from local.properties
+val nvidiaApiKey: String = localProperties.getProperty("NVIDIA_API_KEY") ?: ""
 
 android {
     namespace = "cmov.grupo16.aegis"
@@ -19,6 +32,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // this is used to inject the NVIDIA_API_KEY into the build.gradle.kts file
+        buildConfigField("String", "NVIDIA_API_KEY", "\"$nvidiaApiKey\"")
     }
 
     buildTypes {
