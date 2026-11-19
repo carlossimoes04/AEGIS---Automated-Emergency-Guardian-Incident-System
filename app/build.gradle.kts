@@ -16,6 +16,10 @@ val localProperties = Properties().apply {
 // this is used to get the NVIDIA_API_KEY from local.properties
 val nvidiaApiKey: String = localProperties.getProperty("NVIDIA_API_KEY") ?: ""
 
+
+// Mapbox public token (pk....), read from local.properties
+val mapboxAccessToken: String = localProperties.getProperty("MAPBOX_ACCESS_TOKEN") ?: ""
+
 android {
     namespace = "cmov.grupo16.aegis"
     compileSdk {
@@ -34,6 +38,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // this is used to inject the NVIDIA_API_KEY into the build.gradle.kts file
         buildConfigField("String", "NVIDIA_API_KEY", "\"$nvidiaApiKey\"")
+        buildConfigField("String", "MAPBOX_ACCESS_TOKEN", "\"$mapboxAccessToken\"")
     }
 
     buildTypes {
@@ -84,9 +89,10 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.coil.compose)
 
-    // Mapbox
-    // Mapbox será ativado assim que configurarem o repositório Maven do Mapbox no settings.gradle.kts
-    // implementation(libs.mapbox.maps.android)
+    // Mapbox (mapa) + GPS
+    implementation(libs.mapbox.maps.android)
+    implementation(libs.mapbox.maps.compose)
+    implementation(libs.play.services.location)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
