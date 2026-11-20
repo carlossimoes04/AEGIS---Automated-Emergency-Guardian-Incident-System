@@ -1,7 +1,10 @@
 package cmov.grupo16.aegis.feature_map.ui.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import cmov.grupo16.aegis.BuildConfig
+import com.mapbox.common.MapboxOptions
 import com.mapbox.maps.Style
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
@@ -13,7 +16,7 @@ import com.mapbox.maps.plugin.locationcomponent.location
 
 /**
  * ============================================================================
- *  MapboxMapContainer  (componente de UI)
+ *  MapboxMapContainer (componente de UI)
  * ============================================================================
  *
  *  O QUE FAZ:
@@ -39,6 +42,10 @@ fun MapboxMapContainer(
     showUserLocation: Boolean,
     modifier: Modifier = Modifier
 ) {
+    remember {
+        MapboxOptions.accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN
+        true
+    }
     MapboxMap(
         modifier = modifier,
         mapViewportState = mapViewportState,
