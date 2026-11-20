@@ -5,56 +5,34 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import cmov.grupo16.aegis.feature_scanner.ui.CameraScannerScreen
-import cmov.grupo16.aegis.feature_scanner.ui.DetectionResultScreen
-import cmov.grupo16.aegis.feature_scanner.ui.ScannerUiState
-import cmov.grupo16.aegis.feature_scanner.ui.ScannerViewModel
+import cmov.grupo16.aegis.feature_map.ui.MapScreen
 import cmov.grupo16.aegis.ui.theme.AEGISTheme
+import com.mapbox.common.MapboxOptions
 
+/**
+ * VERSÃO DE TESTE: abre diretamente no ecrã do mapa.
+ * (O código do scanner volta no passo 9, através da navegação.)
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Token público do Mapbox (local.properties -> BuildConfig).
+        // Sem esta linha o mapa não carrega!
+        MapboxOptions.accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN
+
         enableEdgeToEdge()
         setContent {
             AEGISTheme {
-                val viewModel: ScannerViewModel = viewModel(factory = ScannerViewModel.Factory)
-                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-                when (val state = uiState) {
-                    is ScannerUiState.Success -> {
-                        DetectionResultScreen(
-                            villain = state.villain,
-                            capturedBitmap = state.capturedBitmap,
-                            onReportIncident = { villain ->
-                                Toast.makeText(
-                                    this,
-                                    "Report ready: ${villain.name} (Threat ${villain.threatLevel})",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            },
-                            onRetryScan = { viewModel.resetScanner() },
-                            modifier = Modifier.fillMaxSize()
-                        )
+                // O MapScreen cria sozinho o seu MapViewModel
+                MapScreen(
+                    onOpenScanner = {
+                        Toast.makeText(this, "Scanner (ligado no passo 9)", Toast.LENGTH_SHORT).show()
+                    },
+                    onReportIncident = {
+                        Toast.makeText(this, "Reporte (Membro 3)", Toast.LENGTH_SHORT).show()
                     }
-                    else -> {
-                        CameraScannerScreen(
-                            uiState = state,
-                            onImageCaptured = { bitmap, rotation ->
-                                viewModel.onImageCaptured(bitmap, rotation)
-                            },
-                            onCameraError = { error ->
-                                viewModel.onCameraError(error)
-                            },
-                            onRetry = { viewModel.resetScanner() },
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                }
+                )
             }
         }
     }
