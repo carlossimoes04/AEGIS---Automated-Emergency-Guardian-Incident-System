@@ -100,7 +100,7 @@ private val DEFAULT_CENTER: Point = Point.fromLngLat(-9.1558, 38.7562)
 @Composable
 fun MapScreen(
     onOpenScanner: () -> Unit,
-    onReportIncident: () -> Unit,
+    onReportIncident: (Double?, Double?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MapViewModel = viewModel(factory = MapViewModel.Factory)
 ) {
@@ -237,7 +237,12 @@ fun MapScreen(
 
             // Botão "Participar ocorrência" (vermelho)
             FloatingActionButton(
-                onClick = onReportIncident,
+                onClick = {
+                    onReportIncident(
+                        uiState.userLocation?.latitude,
+                        uiState.userLocation?.longitude
+                    )
+                },
                 shape = TacticalShape,
                 containerColor = DangerRed,
                 contentColor = Color.White
