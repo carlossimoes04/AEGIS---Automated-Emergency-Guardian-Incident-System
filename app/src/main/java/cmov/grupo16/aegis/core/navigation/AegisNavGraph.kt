@@ -18,6 +18,7 @@ import cmov.grupo16.aegis.feature_scanner.ui.CameraScannerScreen
 import cmov.grupo16.aegis.feature_scanner.ui.DetectionResultScreen
 import cmov.grupo16.aegis.feature_scanner.ui.ScannerUiState
 import cmov.grupo16.aegis.feature_scanner.ui.ScannerViewModel
+import cmov.grupo16.aegis.feature_report.ui.ReportScreen
 
 @Composable
 fun AegisNavGraph(
@@ -32,15 +33,26 @@ fun AegisNavGraph(
         modifier = modifier.fillMaxSize()
     ) {
         // Map
+
         composable(ScreenRoutes.MAP) {
             MapScreen(
                 onOpenScanner = {
                     scannerViewModel.resetScanner()
                     navController.navigate(ScreenRoutes.SCANNER)
                 },
-                onReportIncident = {
-                    // TODO: Joana - navegar para ScreenRoutes.REPORT
-                    Toast.makeText(context, "Manual Report", Toast.LENGTH_SHORT).show()
+                onReportIncident = { latitude, longitude ->
+
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        "report_latitude",
+                        latitude
+                    )
+
+                    navController.currentBackStackEntry?.savedStateHandle?.set(
+                        "report_longitude",
+                        longitude
+                    )
+
+                    navController.navigate(ScreenRoutes.REPORT)
                 }
             )
         }
@@ -93,6 +105,32 @@ fun AegisNavGraph(
                     }
                 )
             }
+        }
+        // Incident Report
+        composable(ScreenRoutes.REPORT) { backStackEntry ->
+
+            val latitude = navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.get<Double>("report_latitude")
+
+            val longitude = navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.get<Double>("report_longitude")
+
+            ReportScreen(
+                latitude = latitude,
+                longitude = longitude,
+                onBack = {
+                    navController.popBackStack()
+                },
+                onSubmit = { incidentType, description ->
+                    Toast.makeText(
+                        context,
+                        "Report submitted: $incidentType",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
         }
     }
 }
